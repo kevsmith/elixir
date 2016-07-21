@@ -1,6 +1,21 @@
 defmodule EEx.Tokenizer do
   @moduledoc false
 
+  @callback tokenize(bin :: String.t, line :: integer, opts :: Keyword.t) :: {:ok, [term()]} | {:error, integer, term}
+
+  @doc false
+  defmacro __using__(_) do
+    quote do
+      @behaviour EEx.Tokenizer
+
+      def tokenize(bin, line, opts) do
+        EEx.Tokenizer.tokenize(bin, line, opts)
+      end
+
+      defoverridable [tokenize: 3]
+    end
+  end
+
   @doc """
   Tokenizes the given charlist or binary.
 

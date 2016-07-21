@@ -4,16 +4,19 @@ defmodule EEx.Compiler do
   # When changing this setting, don't forget to update the docs for EEx
   @default_engine EEx.SmartEngine
 
+  @default_tokenizer EEx.Tokenizer
+
   @doc """
   This is the compilation entry point. It glues the tokenizer
   and the engine together by handling the tokens and invoking
   the engine every time a full expression or text is received.
   """
   def compile(source, opts) do
-    file   = opts[:file] || "nofile"
-    line   = opts[:line] || 1
-    trim   = opts[:trim] || false
-    case EEx.Tokenizer.tokenize(source, line, trim: trim) do
+    file      = opts[:file] || "nofile"
+    line      = opts[:line] || 1
+    trim      = opts[:trim] || false
+    tokenizer = opts[:tokenizer] || @default_tokenizer
+    case tokenizer.tokenize(source, line, trim: trim) do
       {:ok, tokens} ->
         state = %{engine: opts[:engine] || @default_engine,
                   file: file, line: line, quoted: [], start_line: nil}
